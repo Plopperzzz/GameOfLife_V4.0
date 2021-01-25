@@ -88,17 +88,17 @@ namespace GameOfLife_V4
         {
             int neighbours = 0;
 
-            // Check the 8 adjacent cells
-            for (int row = -1; row <= 1; ++row)
+            // Only want to check tge 3x3 grid surrounding the cell at x,y
+            for (int irow = -1; irow <= 1; ++irow)
             {
-                for (int col = -1; col <= 1; ++col)
+                for (int icol = -1; icol <= 1; ++icol)
                 {
-                    if (col != 0 || row != 0)
+                    if (icol != 0 || irow != 0)
                     {
                         // calculating the indecies for the surrounding cells
                         // mod Size to wrap around the grid
-                        int newCol = (x + col + Width) % Width;
-                        int newRow = (y + row + Height) % Height;
+                        int newCol = (x + icol + Width) % Width;
+                        int newRow = (y + irow + Height) % Height;
                         neighbours += Grid[newRow, newCol].State != State.DEAD ? 1 : 0;
                     }
                 }
@@ -119,14 +119,16 @@ namespace GameOfLife_V4
         {
             int neighbours = 0;
 
-            for (int row = -1; row <= 1; ++row)
+            // Only want to check tge 3x3 grid surrounding the cell at x,y
+            for (int irow = -1; irow <= 1; ++irow)
             {
-                for (int col = -1; col <= 1; ++col)
+                for (int icol = -1; icol <= 1; ++icol)
                 {
-                    if (col + x >= 0 && col + x < Width && row + y >= 0 && row + y < Height)
-                        if (col != 0 || row != 0)
+                    // Bounds checking
+                    if (icol + x >= 0 && icol + x < Width && irow + y >= 0 && irow + y < Height)
+                        if (icol != 0 || irow != 0)
                         {
-                            if (Grid[row + y, col + x].State != State.DEAD)
+                            if (Grid[irow + y, icol + x].State != State.DEAD)
                             {
                                 ++neighbours;
                             }
@@ -142,29 +144,28 @@ namespace GameOfLife_V4
             if (Console.CursorVisible)
                 Console.CursorVisible = false;
 
-            for (int col = 0; col < Height; ++col)
+            for (int irow = 0; irow < Height; ++irow)
             {
 
-                Console.SetCursorPosition(BorderThicknessWidth, col + BorderThicknessHeight);
+                // Don't update the border
+                Console.SetCursorPosition(BorderThicknessWidth, irow + BorderThicknessHeight);
 
-                for (int row = 0; row < Width ; ++row)
+                for (int icol = 0; icol < Width ; ++icol)
                 {
-                    if (Grid[col, row].StateChanged)// || Grid[col,row].State != State.DEAD)
+                    if (Grid[irow, icol].StateChanged)
                     {
-                        Console.SetCursorPosition(2 * row + BorderThicknessWidth, col + BorderThicknessHeight);
-                        Grid[col, row].SetColor();
-                        if (Grid[col, row].State != State.DEAD)
+                        Console.SetCursorPosition(2 * icol + BorderThicknessWidth, irow + BorderThicknessHeight);
+
+                        Grid[irow, icol].SetColor();
+                        if (Grid[irow, icol].State != State.DEAD)
                         {
-                            Console.ForegroundColor = Grid[col, row].Color;
+                            Console.ForegroundColor = Grid[irow, icol].Color;
                             Console.Write("■ ");
                         }
-                       // else if(Grid[col, row].State == State.DEAD)
-                        //{
+
                        else
                             Console.Write("  ");
-                       // }
-                       // else
-                            //Console.Write("X ");
+
                     }
                 }
                 Console.WriteLine();
@@ -183,7 +184,7 @@ namespace GameOfLife_V4
             Cell[,] retArray = new Cell[Height,Width];
             Cell.InitializeCellArray(retArray);
 
-            Update(Rule1, retArray);
+            Update(ZombieRule1, retArray);
 
             return retArray;
         }
@@ -191,14 +192,13 @@ namespace GameOfLife_V4
         {
 
             ++Generation;
-            for(int row = 0; row < Height; ++row)
+            for(int irow = 0; irow < Height; ++irow)
             {
-                for(int col = 0; col < Width; ++col)
+                for(int icol = 0; icol < Width; ++icol)
                 {
-                    rule(retArray, col, row);
-                    retArray[row, col].StateChanged = // Generation % 10 == 0 ?  true :
-                         (Grid[row, col].State != State.DEAD) ^ (retArray[row, col].State != State.DEAD);
-                    retArray[row, col].SetColor();
+                    rule(retArray, icol, irow);
+                    retArray[irow, icol].StateChanged = (Grid[irow, icol].State != State.DEAD) ^ (retArray[irow, icol].State != State.DEAD);
+                    retArray[irow, icol].SetColor();
                 }
             }
         }
@@ -332,7 +332,7 @@ namespace GameOfLife_V4
                 else
                 {
                     retArray[row, col].State = State.DEAD;
-                    ++Population;
+                    --Population;
                 }
             }
 

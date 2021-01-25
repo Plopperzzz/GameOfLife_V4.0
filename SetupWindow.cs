@@ -10,7 +10,9 @@ namespace GameOfLife_V4._0
     {
         public static void WindowSize(int width, int height)
         {
-            Console.SetWindowSize(Math.Min(2 * width + 30, Console.LargestWindowWidth), Math.Min(height + 35, Console.LargestWindowHeight));
+            Console.SetWindowSize(
+                Math.Min(2 * width + 30, Console.LargestWindowWidth), // width
+                Math.Min(height + 35, Console.LargestWindowHeight));  // height
             Console.SetWindowPosition(0, 0);
         }
     }
