@@ -24,6 +24,7 @@ namespace GameOfLife_V4
                 Console.Write("Enter a width less than {0} and a height less than {1}: ", Console.LargestWindowWidth / 2, Console.LargestWindowHeight);
                 string[] input = Console.ReadLine().Split(' ');
                 (x, y) = (Convert.ToInt32(input[0]), Convert.ToInt32(input[1]));
+
                 try
                 {
                     Window.WindowSize(x, y);
@@ -34,8 +35,11 @@ namespace GameOfLife_V4
                 }
             } while (x >= Console.LargestWindowWidth || y >= Console.LargestWindowHeight);
 
-            World world = new World(x, y, 2, 2, 5, 5, new Tuple<State, 
-                double>(State.DEAD, 0.75), new Tuple<State, double>(State.ALIVE, 0.25), new Tuple<State, double>(State.ZOMBIE, 0.000), new Tuple<State, double>(State.SICK, 0)) { BorderThicknessHeight = 2, BorderThicknessWidth = 2, Wrap=true };
+            World world = new World(x, y, 2, 2, 5, 5, new Tuple<State,double>(State.DEAD, 0.75),
+                                                      new Tuple<State, double>(State.ALIVE, 0.25), 
+                                                      new Tuple<State, double>(State.ZOMBIE, 0.000), 
+                                                      new Tuple<State, double>(State.SICK, 0)) 
+                          { BorderThicknessHeight = 2, BorderThicknessWidth = 2, Wrap=true };
             while (true)
             {
                 world.Write();
